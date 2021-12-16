@@ -1,0 +1,10 @@
+org/ihaarr/servlets/JwtServlet.class
+org/ihaarr/model/User.class
+org/ihaarr/servlets/LoginServlet.class
+org/ihaarr/model/UserRole.class
+org/ihaarr/filter/SecurityFilter.class
+org/ihaarr/database/DbUsageType.class
+org/ihaarr/database/DbConnectionManager.class
+org/ihaarr/configuration/MainConfig.class
+org/ihaarr/servlets/AdminServlet.class
+org/ihaarr/DriverListener.class
