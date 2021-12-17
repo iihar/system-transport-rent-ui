@@ -1,7 +1,8 @@
 /Users/ihaarr/IdeaProjects/system/irent-ui/src/main/java/org/ihaarr/servlets/JwtServlet.java
+/Users/ihaarr/IdeaProjects/system/irent-ui/src/main/java/org/ihaarr/servlets/PanelServlet.java
 /Users/ihaarr/IdeaProjects/system/irent-ui/src/main/java/org/ihaarr/model/User.java
 /Users/ihaarr/IdeaProjects/system/irent-ui/src/main/java/org/ihaarr/model/UserRole.java
-/Users/ihaarr/IdeaProjects/system/irent-ui/src/main/java/org/ihaarr/servlets/AdminServlet.java
+/Users/ihaarr/IdeaProjects/system/irent-ui/src/main/java/org/ihaarr/servlets/LogoutServlet.java
 /Users/ihaarr/IdeaProjects/system/irent-ui/src/main/java/org/ihaarr/filter/SecurityFilter.java
 /Users/ihaarr/IdeaProjects/system/irent-ui/src/main/java/org/ihaarr/configuration/MainConfig.java
 /Users/ihaarr/IdeaProjects/system/irent-ui/src/main/java/org/ihaarr/servlets/LoginServlet.java

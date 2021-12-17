@@ -12,6 +12,7 @@ var userService = new UserService();
 var parkingBalloonContentLayout;
 
 $(document).ready(function() {
+    console.log("asdasdaasdads")
 	pages = [$("div#map-container"), $("div#trips-container")];
 	pages.forEach(page => page.hide());
 	
@@ -79,15 +80,12 @@ function initVehicleCreation() {
 }
 
 function completeVehicleCreation() {
+    console.log($("#vehicle-parking").val());
 	vehiclesService.createVehicle({
 		type: $("#vehicle-type").val(),
-		parking: {
-			id: $("#vehicle-parking").val()
-		},
-		geoPosition: {
-			latitude: activeVehicle.geometry.getCoordinates()[0],
-			longitude: activeVehicle.geometry.getCoordinates()[1]
-		}	
+		parkingId: $("#vehicle-parking").val(),
+		latitude: activeVehicle.geometry.getCoordinates()[0],
+		longitude: activeVehicle.geometry.getCoordinates()[1]
 	}, () => {
 		complateFormAction();
 		loadMapObjects();		
@@ -120,14 +118,10 @@ function completeParkingCreation() {
 		name: $("#parking-name").val(),
 		type: "ALL",
 		status: "ACTIVE",
-		area: {
-			center: {
-				latitude: activeParking.geometry.getCoordinates()[0],
-				longitude: activeParking.geometry.getCoordinates()[1]
-			},
-			radiusInMeters: $("#parking-radius").val()
-		}
-	}, () => {
+		latitude: activeParking.geometry.getCoordinates()[0],
+		longitude: activeParking.geometry.getCoordinates()[1],
+		radiusInMeters: $("#parking-radius").val()
+		}, () => {
 		complateFormAction();
 		loadMapObjects();		
 	});
@@ -154,6 +148,7 @@ function complateFormAction() {
 }
 
 function initMapPage() {
+    console.log(isAdmin());
 	if(isAdmin()) {
 		$("#parking-form").hide();
 		$("#vehicle-form").hide();
@@ -202,6 +197,7 @@ function initTripsPage() {
 	tripsService.getTrips(function(trips) {
 		tableBody.empty();
 		trips.forEach(item => {
+		    console.log(item)
 			var statusText, badgeClass;
 			if(item.status == 'FINISHED') {
 				statusText = 'ЗАВЕРШЕНА';
@@ -215,10 +211,10 @@ function initTripsPage() {
 				'<tr>' + 
 					`<td>${item.id}</td>` + 
 					`<td>${item.user.login}</td>` + 
-					`<td>${item.vehicle.regNumber}</td>` + 
+					`<td>${item.transport.id}</td>` +
 					`<td><span class="badge ${badgeClass}">${statusText}</span></td>` + 
-					`<td>${item.startDateTime} ${item.finishDateTime ? ' - ' + item.finishDateTime : ''}</td>` + 
-					`<td>${item.startParking.name} -> ` + (item.finishParking ? `${item.finishParking.name}</td>` : '</td>') + 
+					`<td>${item.beginRent} ${item.endRent ? ' - ' + item.endRent : ''}</td>` +
+					`<td>${item.beginParking.name} -> ` + (item.endParking ? `${item.endParking.name}</td>` : '</td>') +
 					`<td>${item.totalPrice}</td>` + 
 					
 				'</tr>');
@@ -227,9 +223,10 @@ function initTripsPage() {
 }
 
 function addParkingToMap(parking) {
+    console.log(parking)
 	var parkingArea = new ymaps.Circle([
-        [parking.area.center.latitude, parking.area.center.longitude],
-        parking.area.radiusInMeters
+        [parking.latitude, parking.longitude],
+        parking.permittedRadius
     ], {
         hintContent: parking.name,
 		objectId: parking.id,
@@ -263,17 +260,17 @@ function addVehicleToMap(vehicle) {
 	var content;
 	var typeName = vehicle.type == 'BICYCLE' ? 'Велосипед' : 'Электросамокат'; 
 	
-	content = 	`<strong>${typeName} ${vehicle.regNumber}</strong><br>` +
+	content = 	`<strong>${typeName} ${vehicle.id}</strong><br>` +
 				`Статус: ${statusName}<br>` + 
 				`Парковка: ${vehicle.parking.name}<br>`;
 
 	if(vehicle.type == 'ELECTRIC_SCOOTER') {
-		content += `Макс. скорость: ${vehicle.maxKmPerHourSpeed} км/ч<br>`;
-		content += `Заряд: ${vehicle.chargePercent}%<br>`
+		content += `Макс. скорость: ${vehicle.maxSpeed} км/ч<br>`;
+		content += `Заряд: ${vehicle.charge}%<br>`
 	}
 
 	var vehiclePlacemark = new ymaps.Placemark(
-        [vehicle.geoPosition.latitude, vehicle.geoPosition.longitude], {
+        [vehicle.latitude, vehicle.longitude], {
 			balloonContent: content
 		}, {
 			preset: 'islands#governmentCircleIcon',

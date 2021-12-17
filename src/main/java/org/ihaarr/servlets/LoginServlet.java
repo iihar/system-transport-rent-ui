@@ -43,24 +43,19 @@ public class LoginServlet extends HttpServlet {
                 session = req.getSession(true);
             }
             try {
-                String query = "select * from users where password = ?";
+                String query = "select * from users where password = ? and login = ?";
                 PreparedStatement stmt = dbConnectionManager.createConnection().prepareStatement(query);
                 stmt.setString(1 , pass);
+                stmt.setString(2, login);
                 ResultSet resultSet = stmt.executeQuery();
                 if(resultSet.next()) {
-                    if(pass.equals(resultSet.getString("password"))) {
                         Long id = Long.valueOf(resultSet.getString("id"));
-                        BigDecimal balance = BigDecimal.valueOf(Double.parseDouble(resultSet.getString("balance")));
+                        BigDecimal balance = new BigDecimal(resultSet.getString("balance"));
                         UserRole role = UserRole.valueOf(resultSet.getString("role"));
-                        String jwt = generateJwt(new User(id, login, pass, balance, role));
-                        session.setAttribute("login", login);
-                        session.setAttribute("id", id);
-                        session.setAttribute("balance", balance);
-                        session.setAttribute("role", role);
+                        String jwt = generateJwt(new User(id, login, "", balance, role));
                         session.setAttribute("token", jwt);
-                    } else {
-                        pr.println("Incorrect password");
-                    }
+                } else {
+                    pr.print("INCORRECT PASSWORD");
                 }
 
             } catch (SQLException e) {
@@ -84,7 +79,7 @@ public class LoginServlet extends HttpServlet {
         claims.put("id", user.getId());
         claims.put("login", user.getLogin());
         claims.put("balance", user.getBalance());
-        claims.put("role", user.getUserRole().toString());
+        claims.put("role", user.getUserRole());
 
         Date now = new Date();
         Date expirationDate = new Date(now.getTime() + 60 * 60 * 1000);
